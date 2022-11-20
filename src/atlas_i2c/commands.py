@@ -47,7 +47,6 @@ class Baud(Command):
     @classmethod
     def format_command(cls, arg: int = 9600) -> str:
         """Format command string.
-
         Defaults to 9600, which will reboot the sensor in UART mode.
         """
         if arg not in cls.arguments:
@@ -84,11 +83,11 @@ class CalibrateDo(Command):
 class CalibratePh(Command):
     """Calibrate pH sensor."""
 
-    arguments: Tuple[str, str, str, str, str] = ("mid", "low", "high", "clear", "?")
+    arguments: Tuple[str, str, str, str, str, str, str] = ("mid", "low", "high", "clear", "?", "extlow", "exthigh")
     name: str = "Cal"
     processing_delay: int = 900
 
-    calibration_points: Dict[str, float] = {"mid": 7.00, "low": 4.00, "high": 10.00}
+    calibration_points: Dict[str, float] = {"mid": 7.00, "low": 4.00, "high": 10.00, "extlow": -1.00, "exthigh": 15.00}
 
     @classmethod
     def format_command(cls, arg: str = "?") -> str:
@@ -97,7 +96,7 @@ class CalibratePh(Command):
 
         cmd = f"{cls.name}"
 
-        if arg in ("mid", "low", "high"):
+        if arg in ("mid", "low", "high", "extlow", "exthigh"):
             cmd = ",".join([cmd, arg, str(cls.calibration_points[arg])])
         else:
             cmd = ",".join([cmd, arg])
@@ -171,7 +170,6 @@ class I2C(Command):
     @classmethod
     def format_command(cls, address: int = 102) -> str:
         """Format command string.
-
         Defaults to 102, which is the default address for the EZO RTD temp sensor.
         """
         if address not in cls.addresses:
